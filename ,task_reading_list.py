@@ -6,6 +6,7 @@ there's already an entry for that book
 """
 import os
 import json
+import re
 
 
 def main():
@@ -13,6 +14,7 @@ def main():
     tasks = read_json('reading.json')
     path = '/home/sam/notes/2020-08-28_5.md'
     reading_list = get_reading_list(path)
+    description_re = re.compile(r'[A-Z].+\*.+\*')
     added = 0
     for task in tasks:
         add = add_to_reading_list(task, reading_list, path)
@@ -22,8 +24,21 @@ def main():
         book = 'book'
     else:
         book = 'books'
-    cleanup('reading')
     print(f'{added} {book} added to reading list at {path}')
+    tasks_added = 0
+    for list_line in reading_list.split('\n'):
+        desc = description_re.search(list_line)
+        if desc:
+            done = False
+            for task in tasks:
+                if task['description'] == desc.group():
+                    done = True
+                    break
+            if done is False:
+                print(desc.group())
+                tasks_added += add_to_task('reading', desc.group())
+    print(f'{tasks_added} tasks added to task project:reading')
+    cleanup('reading')
 
 
 def export_project(project):
@@ -58,6 +73,12 @@ def add_to_reading_list(task, reading_list, path):
         md_line = gen_md_line(task)
         append_md_line(md_line, path)
         return 1
+
+
+def add_to_task(project, description):
+    cmd = f"task add project:{project} '{description}'"
+    os.system(cmd)
+    return 1
 
 
 def cleanup(project):
