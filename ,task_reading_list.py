@@ -18,8 +18,12 @@ def main():
         add = add_to_reading_list(task, reading_list, path)
         if add is not None:
             added += add
+    if added == 1:
+        book = 'book'
+    else:
+        book = 'books'
     cleanup('reading')
-    print(f'{str(added)} books added to reading list at {path}')
+    print(f'{added} {book} added to reading list at {path}')
 
 
 def export_project(project):
