@@ -1,3 +1,2 @@
-#!/bin/bash
+#!/bin/sh
 xrandr --output HDMI1 --off
-i3-msg restart
