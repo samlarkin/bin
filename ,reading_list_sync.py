@@ -15,7 +15,7 @@ class TaskParser:
         self.md_list = ''
 
     def __repr__(self):
-        return f'TaskParser({self.project}, {self.path_to_notes})'
+        return f"TaskParser('{self.project}', '{self.path_to_notes}')"
 
     def export_project(self):
         cmd = f"task project:{self.project} export > {self.json}"
