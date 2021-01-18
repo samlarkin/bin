@@ -6,7 +6,7 @@ import re
 
 
 class TaskParser:
-    """ Parsing tasks from taskwarrior """
+    """ Parsing tasks from taskwarrior and passing them to a markdown file """
     def __init__(self, project, path_to_notes):
         self.project = project
         self.path_to_notes = path_to_notes
@@ -15,7 +15,7 @@ class TaskParser:
         self.md_list = ''
 
     def __repr__(self):
-        print(f'TaskParser({self.project}, {self.path_to_notes})')
+        return f'TaskParser({self.project}, {self.path_to_notes})'
 
     def export_project(self):
         cmd = f"task project:{self.project} export > {self.json}"
