@@ -2,14 +2,17 @@
 # coding: utf-8
 
 import re
-from random import randint
-import string
+from random import choice
+from string import digits
 import argparse
 import sys
 
 parser = argparse.ArgumentParser()
-parser.add_argument('input_file',
-                    help='the file to be scrambled')
+parser.add_argument(
+    '-i',
+    '--input_file',
+    help='the file to be scrambled'
+)
 args = parser.parse_args()
 
 
@@ -23,8 +26,11 @@ def main(input_file):
 
 
 def read_input(input_file):
-    with open(input_file, 'r') as f:
-        text = f.read()
+    if input_file is not None:
+        with open(input_file, 'r') as f:
+            text = f.read()
+    else:
+        text = sys.stdin.read()
     return text
 
 
@@ -38,12 +44,12 @@ def gen_scrambled_numbers(real_numbers):
     scrambled_numbers = []
     for number in real_numbers:
         scrambled_number = ''
-        for digit in number:
-            if digit in string.digits:
-                random_digit = str(randint(0, 9))
+        for char in number:
+            if char in digits:
+                random_digit = choice(digits)
                 scrambled_number += random_digit
             else:
-                scrambled_number += digit
+                scrambled_number += char
         scrambled_numbers.append(scrambled_number)
     return scrambled_numbers
 
