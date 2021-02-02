@@ -1,6 +1,32 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import os
 import json
 import re
+import argparse
+import sys
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '-f',
+    '--file',
+    help='reading list file for reading/writing markdown notes. '
+         'If FILE is not passed, the program will default to '
+         '[/home/sam/notes/2020-08-28_5.md]'
+)
+args = parser.parse_args()
+
+
+def main(args):
+    if args.file is None:
+        args.file = '/home/sam/notes/2020-08-28_5.md'
+    reading_data = ReadingData('reading', args.file)
+    tp = TaskParser(reading_data)
+    tp.sync_task_to_md()
+    mp = MarkdownParser(reading_data)
+    mp.sync_md_to_task()
+    reading_data.cleanup()
 
 
 class ReadingData:
@@ -18,24 +44,24 @@ class ReadingData:
 
     def task_project_export(self):
         cmd = f"task project:{self.project} export > {self.json}"
+        sys.stderr.write(f'executing ... {cmd}\n')
         os.system(cmd)
-        print(f'task project:{self.project} exported to {self.json}')
 
     def read_json(self):
         with open(self.json, 'r') as json_file:
             self.task_data = json.load(json_file)
-        print(f'task list read from {self.json}')
+        sys.stderr.write(f'reading ... {self.json}\n')
         return self.task_data
 
     def get_md_list(self):
         with open(self.md_file_path, 'r') as md_file:
             self.md_list = md_file.read()
-        print(f'Markdown reading list read from {self.md_file_path}')
+        sys.stderr.write(f'reading ... {self.md_file_path}\n')
         return self.md_list
 
     def cleanup(self):
+        sys.stderr.write(f'removing ... {self.json} temporary file\n')
         os.system(f'rm {self.json}')
-        print('Temporary file {self.json} removed')
 
 
 class TaskParser:
@@ -67,8 +93,10 @@ class TaskParser:
         count = 0
         for task in self.reading_data.task_data:
             count += self.add_to_md_list(task)
-        print(f"{count} task(s) added to list at "
-              f"'{self.reading_data.md_file_path}'")
+        sys.stderr.write(
+            f"{count} task(s) added to list at "
+            f"'{self.reading_data.md_file_path}'\n"
+        )
 
 
 class MarkdownParser:
@@ -100,16 +128,10 @@ class MarkdownParser:
         for description in self.match_book_desc():
             if self.new_entry_required(description) is True:
                 added += self.add_task(description)
-        print(f"{added} task(s) added via 'task add project:reading'")
-
-
-def main():
-    reading_data = ReadingData('reading', '/home/sam/notes/2020-08-28_5.md')
-    tp = TaskParser(reading_data)
-    tp.sync_task_to_md()
-    mp = MarkdownParser(reading_data)
-    mp.sync_md_to_task()
+        sys.stderr.write(
+            f"{added} task(s) added via 'task add project:reading'\n"
+        )
 
 
 if __name__ == '__main__':
-    main()
+    main(args)
