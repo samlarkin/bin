@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding: utf-8
+"""Sync reading list with taskwarrior"""
 
 import os
 import json
@@ -7,30 +7,35 @@ import re
 import argparse
 import sys
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    '-f',
-    '--file',
-    help='reading list file for reading/writing markdown notes. '
-         'If FILE is not passed, the program will default to '
-         '[/home/sam/notes/2020-08-28_5.md]'
-)
-args = parser.parse_args()
 
-
-def main(args):
-    if args.file is None:
-        args.file = '/home/sam/notes/2020-08-28_5.md'
+def main():
+    """Execute syncing procedure"""
+    args = cli()
     reading_data = ReadingData('reading', args.file)
     tp = TaskParser(reading_data)
     tp.sync_task_to_md()
     mp = MarkdownParser(reading_data)
     mp.sync_md_to_task()
     reading_data.cleanup()
+    return
+
+
+def cli():
+    """Parse and return command line arguments."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'file',
+        nargs='?',
+        default='/home/sam/notes/2020-08-28_5.md',
+        help='reading list file for reading/writing markdown notes'
+    )
+    args = parser.parse_args()
+    return args
 
 
 class ReadingData:
-    """ Data holder class for reading list """
+    """Data holder class for reading list"""
+
     def __init__(self, project, md_file_path):
         self.project = project
         self.md_file_path = md_file_path
@@ -65,7 +70,8 @@ class ReadingData:
 
 
 class TaskParser:
-    """ Parse taskwarrior tasks and pass them to a markdown file """
+    """Parse taskwarrior tasks and pass them to a markdown file"""
+
     def __init__(self, reading_data):
         self.reading_data = reading_data
 
@@ -100,7 +106,8 @@ class TaskParser:
 
 
 class MarkdownParser:
-    """ Parse markdown reading list and generate taskwarrior tasks """
+    """Parse markdown reading list and generate taskwarrior tasks"""
+
     def __init__(self, reading_data):
         self.reading_data = reading_data
         self.desc_re = re.compile(r'[A-Z].+\*.+\*')
@@ -134,4 +141,4 @@ class MarkdownParser:
 
 
 if __name__ == '__main__':
-    main(args)
+    main()

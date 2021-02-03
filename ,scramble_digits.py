@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 
 import re
 from random import choice
@@ -7,22 +6,27 @@ from string import digits
 import argparse
 import sys
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    '-i',
-    '--input_file',
-    help='the file to be scrambled'
-)
-args = parser.parse_args()
 
-
-def main(input_file):
-    text = read_input(input_file)
+def main():
+    args = cli()
+    text = read_input(args.input_file)
     input_numbers = find_input_numbers(text)
     scrambled_numbers = gen_scrambled_numbers(input_numbers)
     output_text = replace_list(text, input_numbers, scrambled_numbers)
     sys.stdout.write(output_text)
     return output_text
+
+
+def cli():
+    """Parse and return command line arguments"""
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'input_file',
+        nargs='?',
+        help='the file to be scrambled',
+    )
+    args = parser.parse_args()
+    return args
 
 
 def read_input(input_file):
@@ -62,4 +66,4 @@ def replace_list(input_string, old_list, new_list):
 
 
 if __name__ == '__main__':
-    main(args.input_file)
+    main()
