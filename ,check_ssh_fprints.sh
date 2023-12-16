@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 gen_fingerprint () {
     for file in $(ls $1/*.pub)
     do
