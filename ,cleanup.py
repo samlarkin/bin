@@ -14,7 +14,17 @@ trash = [
     "~/dotfiles/vim/dot-vim/netrwhist",
     "~/dotfiles/vim/dot-vim/.netrwhist",
     "~/.lesshst",
-    "~/.python_history"
+    "~/.python_history",
+    "~/.ghc/",
+    "~/.dvdcss/",
+    "~/.w3m/",
+    "~/.pulse-cookie",
+    "~/.ipython/",
+    "~/.jupyter/",
+    "~/.kde/",
+    "~/.keras/",
+    "~/.npm/",
+    "~/.m2/"
 ]
 
 
